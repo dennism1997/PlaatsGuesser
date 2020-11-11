@@ -10,8 +10,15 @@ enum GameState {
     MultiResult,
 }
 
+enum Mode {
+    Gemeentes,
+    Plaatsen,
+    Wereldsteden,
+}
+
 interface AppState {
     gameState: GameState
+    mode: Mode
     scoreResult: number | Array<number>,
     names: Array<string>
 }
@@ -21,6 +28,7 @@ class App extends React.Component<{}, AppState> {
         super(props);
         this.state = {
             gameState: GameState.Idle,
+            mode: Mode.Gemeentes,
             scoreResult: 0,
             names: [],
         }
@@ -36,14 +44,43 @@ class App extends React.Component<{}, AppState> {
         switch (this.state.gameState) {
             case GameState.Idle:
                 content = <div className={"row justify-content-center"}>
-                    <button className={"btn btn-secondary col-7 col-sm-3 mx-2 my-2"} onClick={(e) => {
-                        this.setGameState(GameState.SinglePlayer)
-                    }}>Single Player
-                    </button>
-                    <button className={"btn btn-secondary col-7 col-sm-3 mx-2 my-2"} onClick={(e) => {
-                        this.setGameState(GameState.MultiPlayer)
-                    }}>Multiplayer
-                    </button>
+                    <div className={"col-12 col-lg-6"}>
+                        <div className={"row"}>
+                            <p>Welkom bij raad de plaats! Klik zo dicht bij de genoemde plaats op de kaart!</p>
+                        </div>
+                        <p className={"row"}>Mode:</p>
+                        <div className={"row justify-content-between"}>
+                            <button
+                                className={"btn col-3" + (this.state.mode === Mode.Gemeentes ? " btn-primary" : " btn-secondary")}
+                                onClick={() => {
+                                    this.setMode(Mode.Gemeentes);
+                                }}>Gemeentes
+                            </button>
+                            <button
+                                className={"btn col-3" + (this.state.mode === Mode.Plaatsen ? " btn-primary" : " btn-secondary")}
+                                onClick={() => {
+                                    this.setMode(Mode.Plaatsen);
+                                }}>Plaatsen
+                            </button>
+                            <button
+                                className={"btn col-3" + (this.state.mode === Mode.Wereldsteden ? " btn-primary" : " btn-secondary")}
+                                onClick={() => {
+                                    this.setMode(Mode.Wereldsteden);
+                                }}>Wereldsteden
+                            </button>
+                        </div>
+                        <p className={"row mt-3"}>Aantal spelers:</p>
+                        <div className={"row justify-content-between mt-3"}>
+                            <button className={"btn btn-primary col-5"} onClick={(e) => {
+                                this.setGameState(GameState.SinglePlayer)
+                            }}>Single Player
+                            </button>
+                            <button className={"btn btn-primary col-5"} onClick={(e) => {
+                                this.setGameState(GameState.MultiPlayer)
+                            }}>Multiplayer
+                            </button>
+                        </div>
+                    </div>
                 </div>;
                 break;
             case GameState.SinglePlayer:
@@ -85,7 +122,7 @@ class App extends React.Component<{}, AppState> {
                         <ul className={"col"}>
                             {namesSorted.map(((name, index) => {
                                 return <li className={"row"} key={index}>
-                                    <span className={"col-5 col-md-3"}>{index + 1}.  {name}</span>
+                                    <span className={"col-5 col-md-3"}>{index + 1}. {name}</span>
                                     <span className={"col-4"}>{Math.round(scoresSorted[index])} km</span>
                                 </li>
                             }))}
@@ -124,12 +161,19 @@ class App extends React.Component<{}, AppState> {
         })
     };
 
-    setGameState(gameState
-                     :
-                     GameState
-    ) {
+    private setGameState(gameState: GameState) {
         this.setState({
             gameState: gameState
+        });
+    }
+
+    resetGameState = () => {
+        this.setGameState(GameState.Idle)
+    };
+
+    private setMode(mode: Mode) {
+        this.setState({
+            mode: mode
         });
     }
 }

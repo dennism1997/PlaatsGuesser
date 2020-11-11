@@ -1,6 +1,6 @@
 import React from "react";
 import L, {LatLng, LeafletMouseEvent} from "leaflet";
-import NederlandGeometry from "./NederlandGeometry";
+import NederlandGeometry from "./geometries/NederlandGeometry";
 import PlaceFeature from "./PlaceFeature";
 
 interface Props {

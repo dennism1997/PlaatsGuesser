@@ -1,6 +1,6 @@
 import {LatLng} from "leaflet";
 import PlaceFeature from "./PlaceFeature";
-import Gemeentes from "./Gemeentes";
+import Gemeentes from "./geometries/Gemeentes";
 
 
 class PlaceFactory {
