@@ -11,6 +11,7 @@ enum MultiplayerGameState {
 
 interface Props {
     showResults: (names: Array<string>, scores: Array<number>) => void,
+    useNetherlands: boolean,
 }
 
 interface State {
@@ -96,7 +97,7 @@ class MultiPlayerGame extends React.Component<Props, State> {
                         </span> is aan de beurt</p>}
                 </div>
                 <div className={"map-row"}>
-                    <GameMap ref={this.gameMap} makeGuess={this.makeGuess}/>
+                    <GameMap ref={this.gameMap} makeGuess={this.makeGuess} useNetherlands={this.props.useNetherlands}/>
                 </div>
             </div>
         } else {

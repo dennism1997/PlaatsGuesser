@@ -5,14 +5,15 @@ import PlaceFactory from "./PlaceFactory";
 import PlaceFeature from "./PlaceFeature";
 
 interface Props {
-    showResult: (score: number) => void,
+    showResults: (places: Array<string>, scores: Array<number>) => void,
+    useNetherlands: boolean
 }
+
 interface State {
-    score: number
     placeToGuess: PlaceFeature
-    placesGuessed: number
-    lastScore: number
-    lastPlaceName: string
+    amountPlacesGuessed: number
+    scores: Array<number>
+    places: Array<string>
 }
 
 class SinglePlayerGame extends React.Component<Props, State> {
@@ -24,34 +25,29 @@ class SinglePlayerGame extends React.Component<Props, State> {
         super(props);
         this.gameMap = React.createRef<GameMap>();
         this.state = {
-            placesGuessed: 0,
+            amountPlacesGuessed: 0,
             placeToGuess: this.placeFactory.getNext(),
-            score: 0,
-            lastScore: -1,
-            lastPlaceName: "",
+            scores: [],
+            places: [],
         };
     }
 
     makeGuess = (e: LeafletMouseEvent) => {
         e.originalEvent.stopPropagation();
         let distance = this.state.placeToGuess.distanceTo(e.latlng);
-        console.log(distance);
 
         this.gameMap.current!.addGuess(this.state.placeToGuess, e.latlng);
 
-        let placesGuessed = this.state.placesGuessed + 1;
-        let newScore = this.state.score + distance;
-
-        if(placesGuessed < 10) {
+        let placesGuessed = this.state.amountPlacesGuessed + 1;
+        if (placesGuessed < 10) {
             this.setState({
-                placesGuessed: placesGuessed,
+                amountPlacesGuessed: placesGuessed,
                 placeToGuess: this.placeFactory.getNext(),
-                score: newScore,
-                lastScore: Math.round(distance * 10) / 10,
-                lastPlaceName: this.state.placeToGuess.name
+                scores: [...this.state.scores, distance],
+                places: [...this.state.places, this.state.placeToGuess.name],
             });
         } else {
-            this.props.showResult(newScore)
+            this.props.showResults(this.state.places, this.state.scores)
         }
 
 
@@ -59,22 +55,25 @@ class SinglePlayerGame extends React.Component<Props, State> {
 
     render() {
         let lastScoreRow = null;
-        if (this.state.lastScore >= 0) {
+        if (this.state.scores.length > 0) {
+            let lastScore = this.state.scores[this.state.scores.length - 1];
             let alertClass = "alert-success";
-            if (this.state.lastScore > 30) {
+            if (lastScore > 30) {
                 alertClass = "alert-warning"
-            } else if (this.state.lastScore > 50) {
+            } else if (lastScore > 50) {
                 alertClass = "alert-danger"
             }
+            let lastPlace = this.state.places[this.state.places.length - 1];
             lastScoreRow = <div className={"col"}> Jouw gok lag <span
-                className={`${alertClass} last-score`}>{this.state.lastScore} km</span> af
-                van {this.state.lastPlaceName}</div>
+                className={`${alertClass} last-score`}>{Math.round(lastScore * 10) / 10} km</span> af
+                van {lastPlace}</div>
         }
+
 
         return <div id={"game"}>
             <div className={"row"}>
-                <p className={"col"}>Score: {Math.round(this.state.score * 10) / 10} km</p>
-                <p className={"col"}>{this.state.placesGuessed}/10</p>
+                <p className={"col"}>Score: {Math.round(this.getTotalScore() * 10) / 10} km</p>
+                <p className={"col"}>{this.state.amountPlacesGuessed}/10</p>
             </div>
             <div className={"row"}>
                 <p className={"col"}>Waar ligt <span className={"place-to-guess"}>{this.state.placeToGuess.name}</span>?
@@ -82,9 +81,14 @@ class SinglePlayerGame extends React.Component<Props, State> {
                 {lastScoreRow}
             </div>
             <div className={"map-row"}>
-                <GameMap ref={this.gameMap} makeGuess={this.makeGuess}/>
+                <GameMap ref={this.gameMap} makeGuess={this.makeGuess} useNetherlands={this.props.useNetherlands}/>
             </div>
         </div>
+    }
+
+
+    private getTotalScore(): number {
+        return this.state.scores.reduce((a, b) => a + b, 0);
     }
 }
 

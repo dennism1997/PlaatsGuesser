@@ -16,11 +16,19 @@ enum Mode {
     Wereldsteden,
 }
 
+type SinglePlayerScoreResult = {
+    placeNames: Array<string>,
+    scores: Array<number>
+}
+type MultiPlayerScoreResult = {
+    playerNames: Array<string>,
+    scores: Array<number>
+}
+
 interface AppState {
     gameState: GameState
     mode: Mode
-    scoreResult: number | Array<number>,
-    names: Array<string>
+    results?: SinglePlayerScoreResult | MultiPlayerScoreResult
 }
 
 class App extends React.Component<{}, AppState> {
@@ -29,8 +37,7 @@ class App extends React.Component<{}, AppState> {
         this.state = {
             gameState: GameState.Idle,
             mode: Mode.Gemeentes,
-            scoreResult: 0,
-            names: [],
+            results: undefined,
         }
         // this.state = {
         //     gameState: GameState.MultiResult,
@@ -84,19 +91,32 @@ class App extends React.Component<{}, AppState> {
                 </div>;
                 break;
             case GameState.SinglePlayer:
-                content = <SinglePlayerGame showResult={this.showResult}/>;
+                content = <SinglePlayerGame showResults={this.showSinglePlayerResult} useNetherlands={this.state.mode !== Mode.Wereldsteden}/>;
                 break;
             case GameState.MultiPlayer:
-                content = <MultiPlayerGame showResults={this.showResults}/>;
+                content = <MultiPlayerGame showResults={this.showMultiPlayerResults} useNetherlands={this.state.mode !== Mode.Wereldsteden}/>;
                 break;
             case GameState.SingleResult:
+                let result = this.state.results as SinglePlayerScoreResult;
                 content = <React.Fragment>
-                    <div className={"row"}>
+                    <div className={"row mt-2"}>
                         <div className={"col"}>
-                            <p>Resultaat: <span className={"score-result"}>{this.state.scoreResult}</span> km</p>
+                            <h4>Resultaten:</h4>
                         </div>
                     </div>
                     <div className={"row"}>
+                        <div className={"col col-md-5"}>
+                            <ul className={"list-group list-group-flush"}>
+                            {result.placeNames.map((placeName, index) => {
+                                let score = result.scores[index];
+                                return <li className={"list-group-item d-flex"} key={index}>
+                                    <span className={"flex-grow-1"}>{placeName}</span>
+                                    <span>{Math.round(score * 10) / 10} km</span></li>
+                            })}
+                            </ul>
+                        </div>
+                    </div>
+                    <div className={"row mt-2"}>
                         <div className={"col"}>
                             <button type={"button"} className={"btn btn-primary"} onClick={() => {
                                 this.setGameState(GameState.Idle)
@@ -107,28 +127,32 @@ class App extends React.Component<{}, AppState> {
                 </React.Fragment>;
                 break;
             case GameState.MultiResult:
-                let scores = this.state.scoreResult as Array<number>;
-                let scoresSorted = (this.state.scoreResult as Array<number>).slice().sort((a, b) => a - b);
-                let namesSorted = this.state.names.slice().sort((a, b) => {
-                    return scoresSorted.indexOf(scores[this.state.names.indexOf(a)]) - scoresSorted.indexOf(scores[this.state.names.indexOf(b)])
+                let results = this.state.results as MultiPlayerScoreResult;
+                let scores = results.scores;
+                let scoresSorted = scores.slice().sort((a, b) => a - b);
+                let namesSorted = results.playerNames.slice().sort((a, b) => {
+                    return scoresSorted.indexOf(scores[results.playerNames.indexOf(a)]) - scoresSorted.indexOf(scores[results.playerNames.indexOf(b)])
                 });
                 content = <React.Fragment>
-                    <div className={"row"}>
+                    <div className={"row mt-2"}>
                         <div className={"col"}>
-                            <p>Resultaten:</p>
+                            <h4>Resultaten:</h4>
                         </div>
                     </div>
                     <div className={"row"}>
-                        <ul className={"col"}>
+                        <div className={"col col-md-5"}>
+                        <ul className={"list-group list-group-flush"}>
                             {namesSorted.map(((name, index) => {
-                                return <li className={"row"} key={index}>
-                                    <span className={"col-5 col-md-3"}>{index + 1}. {name}</span>
-                                    <span className={"col-4"}>{Math.round(scoresSorted[index])} km</span>
+                                return <li className={"list-group-item d-flex"} key={index}>
+                                    <span className={"mr-1"}>{index + 1}.</span>
+                                    <span className={"flex-grow-1"}>{name}</span>
+                                    <span>{Math.round(scoresSorted[index])} km</span>
                                 </li>
                             }))}
                         </ul>
+                        </div>
                     </div>
-                    <div className={"row"}>
+                    <div className={"row mt-2"}>
                         <div className={"col"}>
                             <button type={"button"} className={"btn btn-primary"} onClick={() => {
                                 this.setGameState(GameState.Idle)
@@ -146,18 +170,23 @@ class App extends React.Component<{}, AppState> {
         </div>
     }
 
-    showResult = (score: number) => {
+    showSinglePlayerResult = (placeNames: Array<string>, scores: Array<number>) => {
         this.setState({
             gameState: GameState.SingleResult,
-            scoreResult: Math.round(score)
+            results: {
+                placeNames: placeNames,
+                scores: scores,
+            }
         })
     };
 
-    showResults = (names: Array<string>, scores: Array<number>) => {
+    showMultiPlayerResults = (names: Array<string>, scores: Array<number>) => {
         this.setState({
             gameState: GameState.MultiResult,
-            scoreResult: scores,
-            names: names
+            results: {
+                playerNames: names,
+                scores: scores
+            },
         })
     };
 

@@ -4,7 +4,8 @@ import NederlandGeometry from "./geometries/NederlandGeometry";
 import PlaceFeature from "./PlaceFeature";
 
 interface Props {
-    makeGuess: (e: LeafletMouseEvent) => void
+    makeGuess: (e: LeafletMouseEvent) => void,
+    useNetherlands: boolean
 }
 
 interface State {
@@ -41,7 +42,9 @@ class GameMap extends React.Component<Props, State> {
                 ]);
 
 
-            let geoJson = L.geoJSON(NederlandGeometry as any, {
+            let geometry = this.props.useNetherlands ? NederlandGeometry as any : null;
+
+            let geoJson = L.geoJSON(geometry, {
                 style: {
                     color: '#6d6d6d',
                     weight: 1,
