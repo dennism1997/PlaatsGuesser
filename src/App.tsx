@@ -53,7 +53,7 @@ class App extends React.Component<{}, AppState> {
                 content = <div className={"row justify-content-center"}>
                     <div className={"col-12 col-lg-6"}>
                         <div className={"row"}>
-                            <p>Welkom bij raad de plaats! Klik zo dicht bij de genoemde plaats op de kaart!</p>
+                            <p>Welkom bij raad de plaats! Klik zo dicht mogelijk bij de genoemde plaats op de kaart!</p>
                         </div>
                         <p className={"row"}>Mode:</p>
                         <div className={"row d-flex justify-content-around"}>
