@@ -39,15 +39,17 @@ class SinglePlayerGame extends React.Component<Props, State> {
         this.gameMap.current!.addGuess(this.state.placeToGuess, e.latlng);
 
         let placesGuessed = this.state.amountPlacesGuessed + 1;
+        let newScores = [...this.state.scores, distance];
+        let newPlaces = [...this.state.places, this.state.placeToGuess.name];
         if (placesGuessed < 10) {
             this.setState({
                 amountPlacesGuessed: placesGuessed,
                 placeToGuess: this.placeFactory.getNext(),
-                scores: [...this.state.scores, distance],
-                places: [...this.state.places, this.state.placeToGuess.name],
+                scores: newScores,
+                places: newPlaces,
             });
         } else {
-            this.props.showResults(this.state.places, this.state.scores)
+            this.props.showResults(newPlaces, newScores)
         }
 
 

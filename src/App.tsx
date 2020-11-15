@@ -56,33 +56,35 @@ class App extends React.Component<{}, AppState> {
                             <p>Welkom bij raad de plaats! Klik zo dicht bij de genoemde plaats op de kaart!</p>
                         </div>
                         <p className={"row"}>Mode:</p>
-                        <div className={"row justify-content-between"}>
+                        <div className={"row d-flex justify-content-around"}>
                             <button
-                                className={"btn col-3" + (this.state.mode === Mode.Gemeentes ? " btn-primary" : " btn-secondary")}
+                                className={"btn px-3" + (this.state.mode === Mode.Gemeentes ? " btn-primary" : " btn-secondary")}
                                 onClick={() => {
                                     this.setMode(Mode.Gemeentes);
                                 }}>Gemeentes
                             </button>
                             <button
-                                className={"btn col-3" + (this.state.mode === Mode.Plaatsen ? " btn-primary" : " btn-secondary")}
+                                className={"btn px-3" + (this.state.mode === Mode.Plaatsen ? " btn-primary" : " btn-secondary")}
                                 onClick={() => {
+                                    //TODO enable when working
                                     this.setMode(Mode.Plaatsen);
-                                }}>Plaatsen
+                                }}>Plaatsen (WIP)
                             </button>
                             <button
-                                className={"btn col-3" + (this.state.mode === Mode.Wereldsteden ? " btn-primary" : " btn-secondary")}
+                                className={"btn px-3" + (this.state.mode === Mode.Wereldsteden ? " btn-primary" : " btn-secondary")}
                                 onClick={() => {
+                                    //TODO enable when working
                                     this.setMode(Mode.Wereldsteden);
-                                }}>Wereldsteden
+                                }}>Wereldsteden (WIP)
                             </button>
                         </div>
                         <p className={"row mt-3"}>Aantal spelers:</p>
-                        <div className={"row justify-content-between mt-3"}>
-                            <button className={"btn btn-primary col-5"} onClick={(e) => {
+                        <div className={"row d-flex justify-content-around"}>
+                            <button className={"btn btn-primary px-3"} onClick={(e) => {
                                 this.setGameState(GameState.SinglePlayer)
                             }}>Single Player
                             </button>
-                            <button className={"btn btn-primary col-5"} onClick={(e) => {
+                            <button className={"btn btn-primary px-3"} onClick={(e) => {
                                 this.setGameState(GameState.MultiPlayer)
                             }}>Multiplayer
                             </button>
@@ -105,7 +107,7 @@ class App extends React.Component<{}, AppState> {
                         </div>
                     </div>
                     <div className={"row"}>
-                        <div className={"col col-md-5"}>
+                        <div className={"col col-lg-5 col-md-7"}>
                             <ul className={"list-group list-group-flush"}>
                             {result.placeNames.map((placeName, index) => {
                                 let score = result.scores[index];
@@ -140,7 +142,7 @@ class App extends React.Component<{}, AppState> {
                         </div>
                     </div>
                     <div className={"row"}>
-                        <div className={"col col-md-5"}>
+                        <div className={"col col-lg-5 col-md-7"}>
                         <ul className={"list-group list-group-flush"}>
                             {namesSorted.map(((name, index) => {
                                 return <li className={"list-group-item d-flex"} key={index}>
