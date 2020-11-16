@@ -54,7 +54,7 @@ class App extends React.Component<{}, AppState> {
                     <div className={"col-12 col-lg-6"}>
                         <div className={"row"}>
                             <div className={"col"}>
-                                <p>Welkom bij raad de plaats! Klik zo dicht bij de genoemde plaats op de kaart!</p>
+                                <p>Welkom bij raad de plaats! Klik zo dicht mogelijk bij de genoemde plaats op de kaart!</p>
                             </div>
                         </div>
                         <div className={"row"}>
