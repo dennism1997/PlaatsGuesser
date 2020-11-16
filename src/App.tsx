@@ -53,32 +53,42 @@ class App extends React.Component<{}, AppState> {
                 content = <div className={"row justify-content-center"}>
                     <div className={"col-12 col-lg-6"}>
                         <div className={"row"}>
-                            <p>Welkom bij raad de plaats! Klik zo dicht bij de genoemde plaats op de kaart!</p>
+                            <div className={"col"}>
+                                <p>Welkom bij raad de plaats! Klik zo dicht bij de genoemde plaats op de kaart!</p>
+                            </div>
                         </div>
-                        <p className={"row"}>Mode:</p>
+                        <div className={"row"}>
+                            <div className={"col"}>
+                                <p>Mode:</p>
+                            </div>
+                        </div>
                         <div className={"row d-flex justify-content-around"}>
                             <button
-                                className={"btn px-3" + (this.state.mode === Mode.Gemeentes ? " btn-primary" : " btn-secondary")}
+                                className={"btn px-3 mb-2" + (this.state.mode === Mode.Gemeentes ? " btn-primary" : " btn-secondary")}
                                 onClick={() => {
                                     this.setMode(Mode.Gemeentes);
                                 }}>Gemeentes
                             </button>
                             <button
-                                className={"btn px-3" + (this.state.mode === Mode.Plaatsen ? " btn-primary" : " btn-secondary")}
+                                className={"btn px-3 mb-2" + (this.state.mode === Mode.Plaatsen ? " btn-primary" : " btn-secondary")}
                                 onClick={() => {
                                     //TODO enable when working
                                     this.setMode(Mode.Plaatsen);
                                 }}>Plaatsen (WIP)
                             </button>
                             <button
-                                className={"btn px-3" + (this.state.mode === Mode.Wereldsteden ? " btn-primary" : " btn-secondary")}
+                                className={"btn px-3 mb-2" + (this.state.mode === Mode.Wereldsteden ? " btn-primary" : " btn-secondary")}
                                 onClick={() => {
                                     //TODO enable when working
                                     this.setMode(Mode.Wereldsteden);
                                 }}>Wereldsteden (WIP)
                             </button>
                         </div>
-                        <p className={"row mt-3"}>Aantal spelers:</p>
+                        <div className={"row mt-3"}>
+                            <div className={"col"}>
+                                <p>Aantal spelers:</p>
+                            </div>
+                        </div>
                         <div className={"row d-flex justify-content-around"}>
                             <button className={"btn btn-primary px-3"} onClick={(e) => {
                                 this.setGameState(GameState.SinglePlayer)
@@ -93,32 +103,34 @@ class App extends React.Component<{}, AppState> {
                 </div>;
                 break;
             case GameState.SinglePlayer:
-                content = <SinglePlayerGame showResults={this.showSinglePlayerResult} useNetherlands={this.state.mode !== Mode.Wereldsteden}/>;
+                content = <SinglePlayerGame showResults={this.showSinglePlayerResult}
+                                            useNetherlands={this.state.mode !== Mode.Wereldsteden}/>;
                 break;
             case GameState.MultiPlayer:
-                content = <MultiPlayerGame showResults={this.showMultiPlayerResults} useNetherlands={this.state.mode !== Mode.Wereldsteden}/>;
+                content = <MultiPlayerGame showResults={this.showMultiPlayerResults}
+                                           useNetherlands={this.state.mode !== Mode.Wereldsteden}/>;
                 break;
             case GameState.SingleResult:
                 let result = this.state.results as SinglePlayerScoreResult;
                 content = <React.Fragment>
                     <div className={"row mt-2"}>
                         <div className={"col"}>
-                            <h4>Resultaten:</h4>
+                            <h5>Resultaten:</h5>
                         </div>
                     </div>
                     <div className={"row"}>
                         <div className={"col col-lg-5 col-md-7"}>
                             <ul className={"list-group list-group-flush"}>
-                            {result.placeNames.map((placeName, index) => {
-                                let score = result.scores[index];
-                                return <li className={"list-group-item d-flex"} key={index}>
-                                    <span className={"flex-grow-1"}>{placeName}</span>
-                                    <span>{Math.round(score * 10) / 10} km</span></li>
-                            })}
+                                {result.placeNames.map((placeName, index) => {
+                                    let score = result.scores[index];
+                                    return <li className={"list-group-item d-flex"} key={index}>
+                                        <span className={"flex-grow-1"}>{placeName}</span>
+                                        <span>{Math.round(score * 10) / 10} km</span></li>
+                                })}
                             </ul>
                         </div>
                     </div>
-                    <div className={"row mt-2"}>
+                    <div className={"row my-2"}>
                         <div className={"col"}>
                             <button type={"button"} className={"btn btn-primary"} onClick={() => {
                                 this.setGameState(GameState.Idle)
@@ -138,20 +150,20 @@ class App extends React.Component<{}, AppState> {
                 content = <React.Fragment>
                     <div className={"row mt-2"}>
                         <div className={"col"}>
-                            <h4>Resultaten:</h4>
+                            <h5>Resultaten:</h5>
                         </div>
                     </div>
                     <div className={"row"}>
                         <div className={"col col-lg-5 col-md-7"}>
-                        <ul className={"list-group list-group-flush"}>
-                            {namesSorted.map(((name, index) => {
-                                return <li className={"list-group-item d-flex"} key={index}>
-                                    <span className={"mr-1"}>{index + 1}.</span>
-                                    <span className={"flex-grow-1"}>{name}</span>
-                                    <span>{Math.round(scoresSorted[index])} km</span>
-                                </li>
-                            }))}
-                        </ul>
+                            <ul className={"list-group list-group-flush"}>
+                                {namesSorted.map(((name, index) => {
+                                    return <li className={"list-group-item d-flex"} key={index}>
+                                        <span className={"mr-1"}>{index + 1}.</span>
+                                        <span className={"flex-grow-1"}>{name}</span>
+                                        <span>{Math.round(scoresSorted[index])} km</span>
+                                    </li>
+                                }))}
+                            </ul>
                         </div>
                     </div>
                     <div className={"row mt-2"}>

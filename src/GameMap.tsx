@@ -13,6 +13,8 @@ interface State {
     guessLayer?: L.LayerGroup,
 }
 
+let lastClick = Date.now();
+
 class GameMap extends React.Component<Props, State> {
 
     constructor(props: Readonly<Props> | Props) {
@@ -54,7 +56,15 @@ class GameMap extends React.Component<Props, State> {
             }).addTo(map);
 
             geoJson.on({
-                click: this.props.makeGuess
+                click: (e) => {
+                    let now = Date.now();
+                    if (now - lastClick < 300) {
+                        e.originalEvent.stopImmediatePropagation();
+                    } else {
+                        lastClick = now;
+                        this.props.makeGuess(e);
+                    }
+                }
             });
 
             let layerGroup = new L.LayerGroup([]);
@@ -72,6 +82,11 @@ class GameMap extends React.Component<Props, State> {
             }
         })
 
+    }
+
+
+    componentWillUnmount(): void {
+        this.state.map?.remove();
     }
 
     private addMarker(latlng: LatLng, color: "red" | "green") {
