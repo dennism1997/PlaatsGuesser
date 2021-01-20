@@ -2,10 +2,12 @@ import React from "react";
 import L, {LatLng, LeafletMouseEvent} from "leaflet";
 import NederlandGeometry from "./geometries/NederlandGeometry";
 import PlaceFeature from "./PlaceFeature";
+import {PlaceMode} from "./App";
+import WereldGeometry from "./geometries/WereldGeometry";
 
 interface Props {
     makeGuess: (e: LeafletMouseEvent) => void,
-    useNetherlands: boolean
+    placeMode: PlaceMode
 }
 
 interface State {
@@ -27,26 +29,46 @@ class GameMap extends React.Component<Props, State> {
 
     componentDidMount(): void {
         if (this.state.map == null) {
-            let map = L.map('map',
-                {
-                    zoomControl: false,
-                    dragging: false,
-                    attributionControl: false,
-                    doubleClickZoom: false,
-                    touchZoom: false,
-                    boxZoom: false,
-                    scrollWheelZoom: false,
-                    zoomSnap: 0.1
-                })
-                .setView([52.25, 5.3], 8).fitBounds([
-                    [50.684522, 3.209338],
-                    [53.674163, 7.241321]
-                ]);
+            let map;
+            let geometry;
+            switch (this.props.placeMode) {
+                case PlaceMode.Gemeentes:
+                case PlaceMode.Plaatsen:
+                    geometry = NederlandGeometry;
+                    map = L.map('map',
+                        {
+                            zoomControl: false,
+                            dragging: false,
+                            attributionControl: false,
+                            doubleClickZoom: false,
+                            touchZoom: false,
+                            boxZoom: false,
+                            scrollWheelZoom: false,
+                            zoomSnap: 0.1
+                        }).setView([52.25, 5.3], 8).fitBounds([
+                        [50.684522, 3.209338],
+                        [53.674163, 7.241321]
+                    ]);
+                    break;
+                case PlaceMode.Wereldsteden:
+                    geometry = WereldGeometry;
+                    map = L.map('map',
+                        {
+                            zoomControl: false,
+                            dragging: true,
+                            attributionControl: false,
+                            doubleClickZoom: true,
+                            scrollWheelZoom: true,
+                            zoomSnap: 0.1,
+                            maxBounds:[[-70, -200], [100, 200]],
+                            maxBoundsViscosity: 0.5,
+                            minZoom: 1.6,
+                            maxZoom: 6
+                        }).setView([52.25, 5.3], 1.9);
+                    break;
+            }
 
-
-            let geometry = this.props.useNetherlands ? NederlandGeometry as any : null;
-
-            let geoJson = L.geoJSON(geometry, {
+            let geoJson = L.geoJSON(geometry as any, {
                 style: {
                     color: '#6d6d6d',
                     weight: 1,

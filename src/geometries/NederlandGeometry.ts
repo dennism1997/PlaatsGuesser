@@ -1,3 +1,4 @@
+// @ts-nocheck
 const NederlandGeometry = {
     "type": "GeometryCollection", "geometries": [
         {

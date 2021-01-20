@@ -10,7 +10,7 @@ enum GameState {
     MultiResult,
 }
 
-enum Mode {
+export enum PlaceMode {
     Gemeentes,
     Plaatsen,
     Wereldsteden,
@@ -27,7 +27,7 @@ type MultiPlayerScoreResult = {
 
 interface AppState {
     gameState: GameState
-    mode: Mode
+    placeMode: PlaceMode
     results?: SinglePlayerScoreResult | MultiPlayerScoreResult
 }
 
@@ -36,7 +36,7 @@ class App extends React.Component<{}, AppState> {
         super(props);
         this.state = {
             gameState: GameState.Idle,
-            mode: Mode.Gemeentes,
+            placeMode: PlaceMode.Gemeentes,
             results: undefined,
         }
         // this.state = {
@@ -64,24 +64,22 @@ class App extends React.Component<{}, AppState> {
                         </div>
                         <div className={"row d-flex justify-content-around"}>
                             <button
-                                className={"btn px-3 mb-2" + (this.state.mode === Mode.Gemeentes ? " btn-primary" : " btn-secondary")}
+                                className={"btn px-3 mb-2" + (this.state.placeMode === PlaceMode.Gemeentes ? " btn-primary" : " btn-secondary")}
                                 onClick={() => {
-                                    this.setMode(Mode.Gemeentes);
+                                    this.setMode(PlaceMode.Gemeentes);
                                 }}>Gemeentes
                             </button>
                             <button
-                                className={"btn px-3 mb-2" + (this.state.mode === Mode.Plaatsen ? " btn-primary" : " btn-secondary")}
+                                className={"btn px-3 mb-2" + (this.state.placeMode === PlaceMode.Plaatsen ? " btn-primary" : " btn-secondary")}
                                 onClick={() => {
-                                    //TODO enable when working
-                                    this.setMode(Mode.Plaatsen);
-                                }}>Plaatsen (WIP)
+                                    this.setMode(PlaceMode.Plaatsen);
+                                }}>Plaatsen
                             </button>
                             <button
-                                className={"btn px-3 mb-2" + (this.state.mode === Mode.Wereldsteden ? " btn-primary" : " btn-secondary")}
+                                className={"btn px-3 mb-2" + (this.state.placeMode === PlaceMode.Wereldsteden ? " btn-primary" : " btn-secondary")}
                                 onClick={() => {
-                                    //TODO enable when working
-                                    this.setMode(Mode.Wereldsteden);
-                                }}>Wereldsteden (WIP)
+                                    this.setMode(PlaceMode.Wereldsteden);
+                                }}>Wereldsteden
                             </button>
                         </div>
                         <div className={"row mt-3"}>
@@ -104,11 +102,11 @@ class App extends React.Component<{}, AppState> {
                 break;
             case GameState.SinglePlayer:
                 content = <SinglePlayerGame showResults={this.showSinglePlayerResult}
-                                            useNetherlands={this.state.mode !== Mode.Wereldsteden}/>;
+                                            placeMode={this.state.placeMode}/>;
                 break;
             case GameState.MultiPlayer:
                 content = <MultiPlayerGame showResults={this.showMultiPlayerResults}
-                                           useNetherlands={this.state.mode !== Mode.Wereldsteden}/>;
+                                           placeMode={this.state.placeMode}/>;
                 break;
             case GameState.SingleResult:
                 let result = this.state.results as SinglePlayerScoreResult;
@@ -178,7 +176,7 @@ class App extends React.Component<{}, AppState> {
                 break;
         }
 
-        return <div id={"app"} className={"container"}>
+        return <div id={"app"} className={"container-fluid"}>
             <h1 className={"font-weight-normal"}>Raad de plaats</h1>
             {content}
         </div>
@@ -214,9 +212,9 @@ class App extends React.Component<{}, AppState> {
         this.setGameState(GameState.Idle)
     };
 
-    private setMode(mode: Mode) {
+    private setMode(mode: PlaceMode) {
         this.setState({
-            mode: mode
+            placeMode: mode
         });
     }
 }

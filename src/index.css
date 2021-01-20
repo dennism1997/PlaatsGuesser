@@ -22,44 +22,54 @@ code {
 }
 
 .map-row {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
+flex: 1 1 auto;
+display: flex;
+flex-direction: column;
 }
 
 #map {
-  flex: 1 1 auto;
-  background-color: transparent;
+flex: 1 1 auto;
+background-color: transparent;
 }
 
 .placeLabel {
-  margin-bottom: 15px;
-  background: none;
-  border: none;
-  box-shadow: none;
+margin-bottom: 15px;
+background: none;
+border: none;
+box-shadow: none;
 }
 
 .place-to-guess {
-  font-weight: bold;
+font-weight: bold;
 }
 
 #app {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
+display: flex;
+height: 100%;
+flex-direction: column;
 }
 
 #game {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
+flex: 1 1 auto;
+display: flex;
+flex-direction: column;
 }
 
 .last-score {
-  padding: .25rem;
-  border-radius: .25rem;
+padding: .25rem;
+border-radius: .25rem;
 }
 
 .score-result {
-  font-weight: 600;
+font-weight: 600;
+}
+
+.close > span {
+vertical-align: text-top;
+}
+
+
+.multiplayer-interim-results {
+  max-height: 8rem;
+  margin-bottom: 1rem;
 }

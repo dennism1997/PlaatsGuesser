@@ -1,9 +1,12 @@
 import {LatLng} from "leaflet";
 import PlaceFeature from "./PlaceFeature";
 import Gemeentes from "./geometries/Gemeentes";
+import {PlaceMode} from "./App";
+import Woonplaatsen from "./geometries/Woonplaatsen";
+import WereldSteden from "./geometries/WereldSteden";
 
 
-class PlaceFactory {
+class PlaceGenerator {
     private readonly features: Array<{
         name: string,
         lon: number,
@@ -11,8 +14,18 @@ class PlaceFactory {
     }>;
     private placesDone: Array<string> = [];
 
-    constructor() {
-        this.features = Gemeentes
+    constructor(placeMode: PlaceMode) {
+        switch (placeMode) {
+            case PlaceMode.Gemeentes:
+                this.features = Gemeentes;
+                break;
+            case PlaceMode.Plaatsen:
+                this.features = Woonplaatsen;
+                break;
+            case PlaceMode.Wereldsteden:
+                this.features = WereldSteden;
+                break;
+        }
     }
 
     getNext(): PlaceFeature {
@@ -31,4 +44,4 @@ class PlaceFactory {
     }
 }
 
-export default PlaceFactory
+export default PlaceGenerator

@@ -1,3 +1,4 @@
+// @ts-nocheck
 const Gemeentes = [
     {"name": "Drimmelen", "lon": 4.75877021812073, "lat": 51.7001620694606}, {
         "name": "Westvoorne",

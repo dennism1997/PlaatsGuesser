@@ -1,12 +1,13 @@
 import React, {RefObject} from "react";
 import {LeafletMouseEvent} from "leaflet";
 import GameMap from "./GameMap";
-import PlaceFactory from "./PlaceFactory";
+import PlaceGenerator from "./PlaceGenerator";
 import PlaceFeature from "./PlaceFeature";
+import {PlaceMode} from "./App";
 
 interface Props {
     showResults: (places: Array<string>, scores: Array<number>) => void,
-    useNetherlands: boolean
+    placeMode: PlaceMode
 }
 
 interface State {
@@ -18,12 +19,13 @@ interface State {
 
 class SinglePlayerGame extends React.Component<Props, State> {
 
-    private placeFactory = new PlaceFactory();
+    private placeFactory;
     private readonly gameMap: RefObject<GameMap>;
 
     constructor(props: Props) {
         super(props);
         this.gameMap = React.createRef<GameMap>();
+        this.placeFactory = new PlaceGenerator(this.props.placeMode);
         this.state = {
             amountPlacesGuessed: 0,
             placeToGuess: this.placeFactory.getNext(),
@@ -73,19 +75,22 @@ class SinglePlayerGame extends React.Component<Props, State> {
 
 
         return <div id={"game"}>
-            <div className={"row"}>
-                <p className={"col"}>Score: {Math.round(this.getTotalScore() * 10) / 10} km</p>
-                <p className={"col"}>{this.state.amountPlacesGuessed}/10</p>
-            </div>
-            <div className={"row"}>
-                <p className={"col"}>Waar ligt <span className={"place-to-guess"}>{this.state.placeToGuess.name}</span>?
-                </p>
-                {lastScoreRow}
+            <div className={"container"}>
+                <div className={"row"}>
+                    <p className={"col"}>Score: {Math.round(this.getTotalScore() * 10) / 10} km</p>
+                    <p className={"col"}>{this.state.amountPlacesGuessed}/10</p>
+                </div>
+                <div className={"row"}>
+                    <p className={"col"}>Waar ligt <span
+                        className={"place-to-guess"}>{this.state.placeToGuess.name}</span>?
+                    </p>
+                    {lastScoreRow}
+                </div>
             </div>
             <div className={"map-row"}>
-                <GameMap ref={this.gameMap} makeGuess={this.makeGuess} useNetherlands={this.props.useNetherlands}/>
+                <GameMap ref={this.gameMap} makeGuess={this.makeGuess} placeMode={this.props.placeMode}/>
             </div>
-        </div>
+        </div>;
     }
 
 

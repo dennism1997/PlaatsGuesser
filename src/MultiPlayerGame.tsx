@@ -1,8 +1,9 @@
-import React, {RefObject} from "react";
+import React, {ReactNode, RefObject} from "react";
 import PlaceFeature from "./PlaceFeature";
-import PlaceFactory from "./PlaceFactory";
+import PlaceGenerator from "./PlaceGenerator";
 import GameMap from "./GameMap";
 import {LatLng, LeafletMouseEvent} from "leaflet";
+import {PlaceMode} from "./App";
 
 enum MultiplayerGameState {
     Guessing,
@@ -11,7 +12,7 @@ enum MultiplayerGameState {
 
 interface Props {
     showResults: (names: Array<string>, scores: Array<number>) => void,
-    useNetherlands: boolean,
+    placeMode: PlaceMode,
 }
 
 interface State {
@@ -28,13 +29,14 @@ interface State {
 
 class MultiPlayerGame extends React.Component<Props, State> {
 
-    private placeFactory = new PlaceFactory();
+    private placeFactory;
     private readonly gameMap: RefObject<GameMap>;
     private readonly inputRef: RefObject<HTMLInputElement>;
 
     constructor(props: Props) {
         super(props);
         this.gameMap = React.createRef<GameMap>();
+        this.placeFactory = new PlaceGenerator(this.props.placeMode);
         this.state = {
             placesGuessed: 1,
             placeToGuess: this.placeFactory.getNext(),
@@ -52,7 +54,7 @@ class MultiPlayerGame extends React.Component<Props, State> {
     makeGuess = (e: LeafletMouseEvent) => {
         e.originalEvent.preventDefault();
         e.originalEvent.stopImmediatePropagation();
-        if(this.state.currentPlayerIndex >= this.state.playerNames.length) {
+        if (this.state.currentPlayerIndex >= this.state.playerNames.length) {
             return
         }
         console.log("making guess for player " + this.state.playerNames[this.state.currentPlayerIndex]);
@@ -79,25 +81,29 @@ class MultiPlayerGame extends React.Component<Props, State> {
     render() {
         if (this.state.playerInputFinished) {
             return <div id={"game"}>
-                <div className={"row"}>
-                    <p className={"col"}>{this.state.placesGuessed}/10</p>
-                </div>
-                <div className={"row"}>
-                    <p className={"col"}>
-                        Waar ligt <span className={"place-to-guess"}>{this.state.placeToGuess.name}</span>?
-                    </p>
-                    {this.state.gameState === MultiplayerGameState.Results ? <div className={"col"}>
-                        <button className={"btn btn-primary"} onClick={() => {
-                            this.nextRound();
-                        }}>Volgende
-                        </button>
-                    </div> : <p className={"col"}>
+                <div className={"container"}>
+                    <div className={"row"}>
+                        <p className={"col h5"}>{this.state.placesGuessed}/10</p>
+                        <div className={"col"}>{this.getScoreBoard()}</div>
+                    </div>
+                    <hr className="row"/>
+                    <div className={"row"}>
+                        <p className={"col"}>
+                            Waar ligt <span className={"place-to-guess"}>{this.state.placeToGuess.name}</span>?
+                        </p>
+                        {this.state.gameState === MultiplayerGameState.Results ? <div className={"col"}>
+                            <button className={"btn btn-primary"} onClick={() => {
+                                this.nextRound();
+                            }}>Volgende
+                            </button>
+                        </div> : <p className={"col"}>
                         <span className={"font-weight-bold"}>
                             {this.state.playerNames[this.state.currentPlayerIndex]}
                         </span> is aan de beurt</p>}
+                    </div>
                 </div>
                 <div className={"map-row"}>
-                    <GameMap ref={this.gameMap} makeGuess={this.makeGuess} useNetherlands={this.props.useNetherlands}/>
+                    <GameMap ref={this.gameMap} makeGuess={this.makeGuess} placeMode={this.props.placeMode}/>
                 </div>
             </div>
         } else {
@@ -122,7 +128,13 @@ class MultiPlayerGame extends React.Component<Props, State> {
                         <p className={"mt-3"}>Spelers:</p>
                         <ul className={"list-group"}>
                             {this.state.playerNames.map((name, index) => {
-                                return <li className={"list-group-item py-1"} key={index}>{name}</li>
+                                return <li className={"list-group-item d-flex py-1 align-items-center"} key={index}>
+                                    <span className={"flex-grow-1"}>{name}</span>
+                                    <button type={"button"} className={"close"} onClick={() => {
+                                        this.removePlayer(index)
+                                    }}><span aria-hidden="true">&times;</span>
+                                    </button>
+                                </li>
                             })}
                         </ul>
                     </div>
@@ -130,7 +142,7 @@ class MultiPlayerGame extends React.Component<Props, State> {
                 <div className={"row"}>
                     <div className={"col"}>
                         <button className={"btn btn-primary mt-3"} type={"button"} onClick={() => {
-                            if (this.state.playerNames.length > 0) {
+                            if (this.state.playerNames.length > 1) {
                                 this.setState({
                                     playerInputFinished: true,
                                 })
@@ -153,6 +165,41 @@ class MultiPlayerGame extends React.Component<Props, State> {
         }
         this.inputRef.current!.value = "";
         this.inputRef.current!.focus();
+    }
+
+    removePlayer(index: number) {
+        let playerNames = [...this.state.playerNames];
+        playerNames.splice(index, 1);
+        let playerScores = [...this.state.playerScores];
+        playerScores.splice(index, 1);
+        this.setState({
+            playerNames: playerNames,
+            playerScores: playerScores,
+        });
+        this.inputRef.current!.focus();
+    }
+
+    getScoreBoard(): ReactNode {
+        let scores = this.state.playerScores;
+        let scoresSorted = scores.slice().sort((a, b) => a - b);
+        let namesSorted = this.state.playerNames.slice().sort((a, b) => {
+            return scoresSorted.indexOf(scores[this.state.playerNames.indexOf(a)]) - scoresSorted.indexOf(scores[this.state.playerNames.indexOf(b)])
+        });
+        return <React.Fragment>
+            <div className={"row overflow-auto multiplayer-interim-results"}>
+                <div className={"col col-lg-5 col-md-7"}>
+                    <ul className={"list-group list-group-flush"}>
+                        {namesSorted.map(((name, index) => {
+                            return <li className={"list-group-item d-flex"} key={index}>
+                                <span className={"mr-1"}>{index + 1}.</span>
+                                <span className={"flex-grow-1"}>{name}</span>
+                                <span>{Math.round(scoresSorted[index])} km</span>
+                            </li>
+                        }))}
+                    </ul>
+                </div>
+            </div>
+        </React.Fragment>;
     }
 
     nextRound = () => {
