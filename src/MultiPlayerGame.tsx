@@ -17,7 +17,7 @@ interface Props {
 
 interface State {
     gameState: MultiplayerGameState
-    placeToGuess: PlaceFeature
+    placeToGuess?: PlaceFeature
     placesGuessed: number
     playerInputFinished: boolean,
     playerNames: Array<string>,
@@ -39,7 +39,7 @@ class MultiPlayerGame extends React.Component<Props, State> {
         this.placeFactory = new PlaceGenerator(this.props.placeMode);
         this.state = {
             placesGuessed: 1,
-            placeToGuess: this.placeFactory.getNext(),
+            placeToGuess: undefined,
             currentPlayerIndex: 0,
             playerInputFinished: false,
             playerNames: [],
@@ -51,6 +51,12 @@ class MultiPlayerGame extends React.Component<Props, State> {
         this.inputRef = React.createRef();
     }
 
+    async componentDidMount() {
+        this.setState({
+            placeToGuess: await this.placeFactory.getNext()
+        });
+    }
+
     makeGuess = (e: LeafletMouseEvent) => {
         e.originalEvent.preventDefault();
         e.originalEvent.stopImmediatePropagation();
@@ -58,7 +64,7 @@ class MultiPlayerGame extends React.Component<Props, State> {
             return
         }
         console.log("making guess for player " + this.state.playerNames[this.state.currentPlayerIndex]);
-        let distance = this.state.placeToGuess.distanceTo(e.latlng);
+        let distance = this.state.placeToGuess!!.distanceTo(e.latlng);
 
         let newPlayerIndex = this.state.currentPlayerIndex + 1;
 
@@ -68,7 +74,7 @@ class MultiPlayerGame extends React.Component<Props, State> {
             currentGuesses: this.state.currentGuesses.concat([e.latlng])
         }, () => {
             if (this.state.currentPlayerIndex >= this.state.playerNames.length) {
-                this.gameMap.current!.addGuesses(this.state.placeToGuess, this.state.currentGuesses, this.state.playerNames, this.state.currentScores);
+                this.gameMap.current!.addGuesses(this.state.placeToGuess!!, this.state.currentGuesses, this.state.playerNames, this.state.currentScores);
                 this.setState({
                     gameState: MultiplayerGameState.Results
                 })
@@ -79,6 +85,9 @@ class MultiPlayerGame extends React.Component<Props, State> {
     };
 
     render() {
+        if (!this.state.placeToGuess) {
+            return <div/>
+        }
         if (this.state.playerInputFinished) {
             return <div id={"game"}>
                 <div className={"container"}>
@@ -89,7 +98,7 @@ class MultiPlayerGame extends React.Component<Props, State> {
                     <hr className="row"/>
                     <div className={"row"}>
                         <p className={"col"}>
-                            Waar ligt <span className={"place-to-guess"}>{this.state.placeToGuess.name}</span>?
+                            Waar ligt <span className={"place-to-guess"}>{this.state.placeToGuess!!.name}</span>?
                         </p>
                         {this.state.gameState === MultiplayerGameState.Results ? <div className={"col"}>
                             <button className={"btn btn-primary"} onClick={() => {
@@ -202,7 +211,7 @@ class MultiPlayerGame extends React.Component<Props, State> {
         </React.Fragment>;
     }
 
-    nextRound = () => {
+    nextRound = async () => {
         let newScores = this.state.currentScores.map((score, index) => {
             return this.state.playerScores[index] + score;
         });
@@ -214,7 +223,7 @@ class MultiPlayerGame extends React.Component<Props, State> {
                 currentScores: [],
                 currentGuesses: [],
                 placesGuessed: this.state.placesGuessed + 1,
-                placeToGuess: this.placeFactory.getNext(),
+                placeToGuess: await this.placeFactory.getNext(),
             });
             this.gameMap.current!.clearGuesses()
         } else {

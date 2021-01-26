@@ -1,9 +1,7 @@
 import React from "react";
 import L, {LatLng, LeafletMouseEvent} from "leaflet";
-import NederlandGeometry from "./geometries/NederlandGeometry";
 import PlaceFeature from "./PlaceFeature";
 import {PlaceMode} from "./App";
-import WereldGeometry from "./geometries/WereldGeometry";
 
 interface Props {
     makeGuess: (e: LeafletMouseEvent) => void,
@@ -27,14 +25,15 @@ class GameMap extends React.Component<Props, State> {
         };
     }
 
-    componentDidMount(): void {
+    async componentDidMount(): Promise<void> {
         if (this.state.map == null) {
             let map;
             let geometry;
             switch (this.props.placeMode) {
                 case PlaceMode.Gemeentes:
-                case PlaceMode.Plaatsen:
-                    geometry = NederlandGeometry;
+                case PlaceMode.Plaatsen: {
+                    const response = await fetch("geometries/nederland.json");
+                    geometry = await response.json();
                     map = L.map('map',
                         {
                             zoomControl: false,
@@ -50,8 +49,10 @@ class GameMap extends React.Component<Props, State> {
                         [53.674163, 7.241321]
                     ]);
                     break;
-                case PlaceMode.Wereldsteden:
-                    geometry = WereldGeometry;
+                }
+                case PlaceMode.Wereldsteden: {
+                    const response = await fetch("geometries/wereld.json")
+                    geometry = await response.json();
                     map = L.map('map',
                         {
                             zoomControl: false,
@@ -60,12 +61,13 @@ class GameMap extends React.Component<Props, State> {
                             doubleClickZoom: true,
                             scrollWheelZoom: true,
                             zoomSnap: 0.1,
-                            maxBounds:[[-70, -200], [100, 200]],
+                            maxBounds: [[-70, -200], [100, 200]],
                             maxBoundsViscosity: 0.5,
                             minZoom: 1.6,
                             maxZoom: 6
                         }).setView([52.25, 5.3], 1.9);
                     break;
+                }
             }
 
             let geoJson = L.geoJSON(geometry as any, {

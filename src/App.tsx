@@ -51,51 +51,54 @@ class App extends React.Component<{}, AppState> {
         switch (this.state.gameState) {
             case GameState.Idle:
                 content = <div className={"row justify-content-center"}>
-                    <div className={"col-12 col-lg-6"}>
-                        <div className={"row"}>
-                            <div className={"col"}>
-                                <p>Welkom bij raad de plaats! Klik zo dicht mogelijk bij de genoemde plaats op de kaart!</p>
+                    <div className={"col-8 col-lg-6"}>
+                        <div className={"container"}>
+                            <div className={"row"}>
+                                <div className={"col"}>
+                                    <p>Welkom bij raad de plaats! Klik zo dicht mogelijk bij de genoemde plaats op de
+                                        kaart!</p>
+                                </div>
                             </div>
-                        </div>
-                        <div className={"row"}>
-                            <div className={"col"}>
-                                <p>Mode:</p>
+                            <div className={"row"}>
+                                <div className={"col"}>
+                                    <p>Mode:</p>
+                                </div>
                             </div>
-                        </div>
-                        <div className={"row d-flex justify-content-around"}>
-                            <button
-                                className={"btn px-3 mb-2" + (this.state.placeMode === PlaceMode.Gemeentes ? " btn-primary" : " btn-secondary")}
-                                onClick={() => {
-                                    this.setMode(PlaceMode.Gemeentes);
-                                }}>Gemeentes
-                            </button>
-                            <button
-                                className={"btn px-3 mb-2" + (this.state.placeMode === PlaceMode.Plaatsen ? " btn-primary" : " btn-secondary")}
-                                onClick={() => {
-                                    this.setMode(PlaceMode.Plaatsen);
-                                }}>Plaatsen
-                            </button>
-                            <button
-                                className={"btn px-3 mb-2" + (this.state.placeMode === PlaceMode.Wereldsteden ? " btn-primary" : " btn-secondary")}
-                                onClick={() => {
-                                    this.setMode(PlaceMode.Wereldsteden);
-                                }}>Wereldsteden
-                            </button>
-                        </div>
-                        <div className={"row mt-3"}>
-                            <div className={"col"}>
-                                <p>Aantal spelers:</p>
+                            <div className={"row d-flex justify-content-around"}>
+                                <button
+                                    className={"btn px-3 mb-2" + (this.state.placeMode === PlaceMode.Gemeentes ? " btn-primary" : " btn-secondary")}
+                                    onClick={() => {
+                                        this.setMode(PlaceMode.Gemeentes);
+                                    }}>Gemeentes
+                                </button>
+                                <button
+                                    className={"btn px-3 mb-2" + (this.state.placeMode === PlaceMode.Plaatsen ? " btn-primary" : " btn-secondary")}
+                                    onClick={() => {
+                                        this.setMode(PlaceMode.Plaatsen);
+                                    }}>Plaatsen
+                                </button>
+                                <button
+                                    className={"btn px-3 mb-2" + (this.state.placeMode === PlaceMode.Wereldsteden ? " btn-primary" : " btn-secondary")}
+                                    onClick={() => {
+                                        this.setMode(PlaceMode.Wereldsteden);
+                                    }}>Wereldsteden
+                                </button>
                             </div>
-                        </div>
-                        <div className={"row d-flex justify-content-around"}>
-                            <button className={"btn btn-primary px-3"} onClick={(e) => {
-                                this.setGameState(GameState.SinglePlayer)
-                            }}>Single Player
-                            </button>
-                            <button className={"btn btn-primary px-3"} onClick={(e) => {
-                                this.setGameState(GameState.MultiPlayer)
-                            }}>Multiplayer
-                            </button>
+                            <div className={"row mt-3"}>
+                                <div className={"col"}>
+                                    <p>Aantal spelers:</p>
+                                </div>
+                            </div>
+                            <div className={"row d-flex justify-content-around"}>
+                                <button className={"btn btn-primary px-3"} onClick={(e) => {
+                                    this.setGameState(GameState.SinglePlayer)
+                                }}>Single Player
+                                </button>
+                                <button className={"btn btn-primary px-3"} onClick={(e) => {
+                                    this.setGameState(GameState.MultiPlayer)
+                                }}>Multiplayer
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>;
@@ -110,7 +113,7 @@ class App extends React.Component<{}, AppState> {
                 break;
             case GameState.SingleResult:
                 let result = this.state.results as SinglePlayerScoreResult;
-                content = <React.Fragment>
+                content = <div className={"container"}>
                     <div className={"row mt-2"}>
                         <div className={"col"}>
                             <h5>Resultaten:</h5>
@@ -136,7 +139,7 @@ class App extends React.Component<{}, AppState> {
                             </button>
                         </div>
                     </div>
-                </React.Fragment>;
+                </div>;
                 break;
             case GameState.MultiResult:
                 let results = this.state.results as MultiPlayerScoreResult;

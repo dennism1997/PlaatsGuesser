@@ -1,5 +1,4 @@
-// @ts-nocheck
-const WereldSteden = [
+[
   {
     "name": "Bombo",
     "lat": 0.58329910562,
@@ -6245,5 +6244,4 @@ const WereldSteden = [
     "lat": 22.304980895,
     "lon": 114.185009317
   }
-];
-export default WereldSteden
+]
