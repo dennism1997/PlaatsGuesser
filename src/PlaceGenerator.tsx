@@ -1,6 +1,7 @@
 import {LatLng} from "leaflet";
 import PlaceFeature from "./PlaceFeature";
 import {PlaceMode} from "./App";
+import loadGeometries from "./Utils";
 
 
 class PlaceGenerator {
@@ -19,18 +20,15 @@ class PlaceGenerator {
     async loadFeatures() {
         switch (this.placeMode) {
             case PlaceMode.Gemeentes: {
-                let response = await fetch("geometries/gemeentes.json");
-                this.features = await response.json();
+                this.features = await loadGeometries("gemeentes");
                 break;
             }
             case PlaceMode.Plaatsen: {
-                let response = await fetch("geometries/plaatsen.json");
-                this.features = await response.json();
+                this.features = await loadGeometries("plaatsen");
                 break;
             }
             case PlaceMode.Wereldsteden: {
-                let response = await fetch("geometries/wereldsteden.json");
-                this.features = await response.json();
+                this.features = await loadGeometries("wereldsteden");
                 break;
             }
         }

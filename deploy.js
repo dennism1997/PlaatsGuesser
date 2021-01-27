@@ -12,10 +12,10 @@ let config = {
     remoteRoot: "/public_html/",
     include: ["*", "**/*", ".htaccess"],
     deleteRemote: false,
-    forcePasv: true,
-    sftp: true,
+    forcePasv: false,
+    sftp: false,
 }
 
 ftpDeploy.deploy(config)
     .then(res => console.log("finished: " + res))
-    .catch(console.error)
+    .catch(err => console.log(err))

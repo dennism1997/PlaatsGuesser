@@ -128,6 +128,10 @@ class App extends React.Component<{}, AppState> {
                                         <span className={"flex-grow-1"}>{placeName}</span>
                                         <span>{Math.round(score * 10) / 10} km</span></li>
                                 })}
+                                <li className={"list-group-item d-flex"}>
+                                    <span className={"flex-grow-1 font-weight-bold"}>Totaal</span>
+                                    <span className={"font-weight-bold"}>{Math.round(result.scores.reduce((a, b) => a + b, 0) * 10) / 10} km</span>
+                                </li>
                             </ul>
                         </div>
                     </div>

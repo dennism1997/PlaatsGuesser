@@ -23,7 +23,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "upload": "node deploy"
+    "deploy": "node deploy"
   },
   "eslintConfig": {
     "extends": [

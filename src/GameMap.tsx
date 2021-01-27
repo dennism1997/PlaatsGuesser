@@ -2,6 +2,7 @@ import React from "react";
 import L, {LatLng, LeafletMouseEvent} from "leaflet";
 import PlaceFeature from "./PlaceFeature";
 import {PlaceMode} from "./App";
+import loadGeometries from "./Utils";
 
 interface Props {
     makeGuess: (e: LeafletMouseEvent) => void,
@@ -32,8 +33,7 @@ class GameMap extends React.Component<Props, State> {
             switch (this.props.placeMode) {
                 case PlaceMode.Gemeentes:
                 case PlaceMode.Plaatsen: {
-                    const response = await fetch("geometries/nederland.json");
-                    geometry = await response.json();
+                    geometry = await loadGeometries("nederland");
                     map = L.map('map',
                         {
                             zoomControl: false,
@@ -51,8 +51,7 @@ class GameMap extends React.Component<Props, State> {
                     break;
                 }
                 case PlaceMode.Wereldsteden: {
-                    const response = await fetch("geometries/wereld.json")
-                    geometry = await response.json();
+                    geometry = await loadGeometries("wereld");
                     map = L.map('map',
                         {
                             zoomControl: false,
